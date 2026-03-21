@@ -1,0 +1,21 @@
+aid: jpmorgan-chase
+url: https://raw.githubusercontent.com/api-evangelist/jpmorgan-chase/refs/heads/main/apis.yml
+modified: '2026-03-21'
+apis:
+  - aid: jpmorgan-chase:jpmorgan-api
+    name: JPMorgan Chase API
+    tags:
+      - Banking
+      - Payments
+      - Finance
+      - Treasury
+    image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+    baseURL: https://api.jpmorgan.com
+    humanURL: https://developer.jpmorgan.com/
+    properties:
+      - url: https://developer.jpmorgan.com/
+        type: Documentation
+      - url: openapi/jpmorgan-chase-jpmorgan-api-openapi.yml
+        type: OpenAPI
+    description: >-
+      JPMorgan Chase provides developer APIs for banking services including payments, treasury, trade finance, and market data. The APIs enable corporate clients and fintech partners to integrate banking capabilities into their applications.
