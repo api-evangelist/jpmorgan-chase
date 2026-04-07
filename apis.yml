@@ -1,17 +1,15 @@
 aid: jpmorgan-chase
-url: 
-  https://raw.githubusercontent.com/api-evangelist/jpmorgan-chase/refs/heads/main/apis.yml
+url: https://raw.githubusercontent.com/api-evangelist/jpmorgan-chase/refs/heads/main/apis.yml
 modified: '2026-03-21'
 apis:
   - aid: jpmorgan-chase:jpmorgan-api
     name: JPMorgan Chase API
     tags:
       - Banking
-      - Payments
       - Finance
+      - Payments
       - Treasury
-    image: 
-      https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+    image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
     baseURL: https://api.jpmorgan.com
     humanURL: https://developer.jpmorgan.com/
     properties:
