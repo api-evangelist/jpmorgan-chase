@@ -1,5 +1,6 @@
 specification: FinOps Framework
 specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
 alignedWith:
   framework: FinOps Foundation Framework
   frameworkUrl: https://www.finops.org/framework/
@@ -8,127 +9,93 @@ alignedWith:
   dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
 provider: JPMorgan Chase
 providerId: jpmorgan-chase
-publisherName: JPMorgan Chase
-serviceCategory: API
+publisherName: JPMorgan Chase Bank, N.A.
+serviceCategory: Banking / Payments
 created: '2026-05-04'
-modified: '2026-05-04'
+modified: '2026-05-05'
+reconciled: false
+notes: JPMorgan Chase does not expose a public usage-billing API for its developer /
+  Payments surface. FinOps shape inferred from a per-transaction banking model. Meters
+  list common payment-class billable units; replace with the contract-specific invoice
+  line items.
 tags:
   - Banking
   - Embedded Finance
-  - Finance
   - Financial Services
   - Payments
   - Treasury
   - FinOps
-  - Cost Management
   - FOCUS
-description: FinOps framework definition for the JPMorgan Chase API surface. Provides a FOCUS-aligned
-  mapping for cost allocation, usage measurement, and unit-economics reporting across the provider's APIs.
-principles:
-  - name: Visibility
-    description: Make API consumption costs visible to engineering, product, and finance teams in near
-      real-time.
-  - name: Allocation
-    description: Tag every chargeable API call with the consuming team, environment, application, and
-      feature so cost can be allocated.
-  - name: Optimization
-    description: Continuously evaluate request patterns, caching, batching, and tier selection to reduce
-      cost per useful unit of work.
-  - name: Accountability
-    description: Establish budget owners and chargeback or showback flows for each consuming team.
-domains:
-  - name: Understand Usage and Cost
-    capabilities:
-      - Data Ingestion
-      - Allocation
-      - Reporting and Analytics
-      - Anomaly Management
-  - name: Quantify Business Value
-    capabilities:
-      - Planning and Estimating
-      - Forecasting
-      - Budgeting
-      - Benchmarking
-      - Unit Economics
-  - name: Optimize Usage and Cost
-    capabilities:
-      - Architecting for Cloud
-      - Rate Optimization
-      - Workload Optimization
-      - Cloud Sustainability
-      - Licensing and SaaS
-  - name: Manage the FinOps Practice
-    capabilities:
-      - FinOps Practice Operations
-      - FinOps Education and Enablement
-      - Invoicing and Chargeback
-      - Onboarding Workloads
-      - Intersecting Disciplines
+description: FOCUS-aligned FinOps scaffold for JPMorgan Chase Payments / Treasury / Embedded
+  Banking APIs. Treated as a per-transaction banking model with negotiated client pricing.
+sources:
+  - https://www.jpmorgan.com/payments
+  - https://developer.payments.jpmorgan.com/
+  - https://www.finops.org/framework/
+  - https://focus.finops.org/focus-specification/v1-3/
 billingModel:
-  pricingCategory: Usage-Based
+  pricingCategory: Per-Transaction + Negotiated
   billingFrequency: Monthly
   billingCurrency: USD
   chargeCategories:
     - Usage
     - Purchase
-    - Tax
-    - Credit
     - Adjustment
-  chargeFrequency: Recurring
+    - Refund
 focusColumns:
-  ServiceName: JPMorgan Chase
-  ServiceCategory: Developer Tools / API
+  ServiceName: JPMorgan Chase Payments APIs
+  ServiceCategory: Banking / Payments
   ProviderName: JPMorgan Chase
-  PublisherName: JPMorgan Chase
-  InvoiceIssuerName: JPMorgan Chase
-  PricingCategory: Usage-Based
-  PricingUnit: request
+  PublisherName: JPMorgan Chase Bank, N.A.
+  InvoiceIssuerName: JPMorgan Chase Bank, N.A.
   BillingCurrency: USD
-  ChargeCategory: Usage
 meters:
+  - name: ach_transactions
+    unit: transaction
+    aggregation: sum
+    dimensions:
+      - account
+      - direction
+      - sec_code
+  - name: wire_transactions
+    unit: transaction
+    aggregation: sum
+    dimensions:
+      - account
+      - currency
+      - direction
+  - name: rtp_transactions
+    unit: transaction
+    aggregation: sum
+    dimensions:
+      - account
+      - direction
+  - name: card_transactions
+    unit: transaction
+    aggregation: sum
+    dimensions:
+      - account
+      - card_brand
+      - mcc
   - name: api_requests
-    description: Count of billable API requests
     unit: request
     aggregation: sum
     dimensions:
-      - api
-      - endpoint
-      - tier
-      - region
-      - consumer
-  - name: data_egress
-    description: Bytes returned over the network in API responses
-    unit: GB
-    aggregation: sum
-    dimensions:
-      - api
-      - region
-      - consumer
-  - name: compute_seconds
-    description: Server-side compute consumed by the request, where applicable
-    unit: second
-    aggregation: sum
-    dimensions:
-      - api
-      - endpoint
-      - tier
-apis:
-  - name: JPMorgan Chase API
-    baseURL: https://api.jpmorgan.com
-    tags:
-      - Banking
-      - Finance
-      - Payments
-      - Treasury
-    serviceName: JPMorgan Chase API
-    serviceCategory: API
-unitEconomics:
-  - name: Cost per 1K Requests
-    metric: billed_cost / (api_requests / 1000)
-    target: TBD
-  - name: Cost per Active Consumer
-    metric: billed_cost / active_consumers
-    target: TBD
+      - product
+      - account
+principles:
+  - name: Visibility
+    description: Reconcile usage against the monthly J.P. Morgan account analysis statement;
+      developer portal also exposes per-call telemetry for some products.
+  - name: Allocation
+    description: Allocate by account number and product (ACH, Wires, RTP, Card, FX) to
+      mirror account-analysis line items.
+  - name: Optimization
+    description: Right-size between rails (RTP vs ACH vs Wire) for cost-per-payment;
+      reconcile FX margin against quoted rates.
+  - name: Accountability
+    description: Pair the J.P. Morgan implementation manager with an internal treasurer /
+      payments product owner; review quarterly.
 maintainers:
-  - FN: API Evangelist
-    email: info@apievangelist.com
+  - FN: Kin Lane
+    email: kin@apievangelist.com

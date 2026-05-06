@@ -4,7 +4,12 @@ schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main
 provider: JPMorgan Chase
 providerId: jpmorgan-chase
 created: '2026-05-04'
-modified: '2026-05-04'
+modified: '2026-05-05'
+reconciled: false
+notes: JPMorgan Chase does not publish a public price list for its developer / payments
+  APIs. Pricing is determined per banking relationship through the J.P. Morgan Payments
+  and Embedded Banking sales motion. Reconciliation blocked pending publicly available
+  rate sheet.
 tags:
   - Banking
   - Embedded Finance
@@ -12,138 +17,36 @@ tags:
   - Financial Services
   - Payments
   - Treasury
-description: Machine-readable plans and pricing scaffold for this API provider. Conforms to the API Commons
-  Plans schema. Tier limits and prices are scaffold defaults; replace with provider-published values.
+description: Plans artifact for JPMorgan Chase developer / Payments / Embedded Finance APIs.
+  Commercial terms are negotiated as part of a banking relationship rather than a self-serve
+  plan tier.
+sources:
+  - https://www.jpmorgan.com/payments
+  - https://developer.payments.jpmorgan.com/
 plans:
-  - id: jpmorgan-chase-free
-    name: Free
-    type: freemium
-    description: Free entry tier for the JPMorgan Chase API surface. Intended for evaluation, prototyping,
-      and low-volume integrations. Real limits and pricing must be reconciled with the provider's published
-      plan documentation.
-    entries:
-      - label: API Requests
-        description: Monthly API request quota across all included endpoints
-        name: api_requests
-        type: quota
-        metric: requests
-        limit: 1000
-        timeFrame: month
-        geo: global
-        domains:
-          - https://api.jpmorgan.com
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-      - label: Rate Limit
-        description: Maximum requests per minute on the free tier
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 10
-        timeFrame: minute
-        geo: global
-        domains:
-          - https://api.jpmorgan.com
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-    elements:
-      - name: Public Documentation
-      - name: Community Support
-      - name: Sandbox Access
-      - name: JPMorgan Chase API
-  - id: jpmorgan-chase-pro
-    name: Professional
-    type: paid
-    description: Production tier for JPMorgan Chase. Provides higher quotas, priority support, and access
-      to the broader API portfolio. Pricing placeholder; align with the provider's pricing page.
-    entries:
-      - label: API Requests
-        description: Monthly API request quota
-        name: api_requests
-        type: quota
-        metric: requests
-        limit: 100000
-        timeFrame: month
-        geo: global
-        domains:
-          - https://api.jpmorgan.com
-        unit: 1
-        price: TBD
-        userMultiplied: false
-      - label: Rate Limit
-        description: Maximum requests per minute on the professional tier
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 100
-        timeFrame: minute
-        geo: global
-        domains:
-          - https://api.jpmorgan.com
-        unit: 1
-        price: '0.00'
-        userMultiplied: false
-      - label: Overage
-        description: Per-request price after monthly quota is exceeded
-        name: overage
-        type: metered
-        metric: requests
-        limit: -1
-        timeFrame: month
-        geo: global
-        domains:
-          - https://api.jpmorgan.com
-        unit: 1000
-        price: TBD
-        userMultiplied: false
-    elements:
-      - name: All Production Endpoints
-      - name: Email Support
-      - name: SLA Targets
-      - name: Webhook Subscriptions
-      - name: JPMorgan Chase API
-  - id: jpmorgan-chase-enterprise
-    name: Enterprise
+  - id: jpmorgan-chase-banking-relationship
+    name: Banking Relationship
     type: enterprise
-    description: Custom-negotiated tier for JPMorgan Chase. Includes dedicated capacity, contractual SLAs,
-      security review, data residency options, and named technical account management.
+    description: API access (Payments, Treasury Services, Embedded Banking, ACH, Wires,
+      Real-Time Payments, FX) is unlocked as part of an underlying banking relationship.
+      Per-transaction fees and any monthly minimums are set in the client agreement, not on
+      a public price list.
     entries:
-      - label: API Requests
-        description: Negotiated request volume; -1 indicates uncapped subject to fair use
-        name: api_requests
-        type: quota
-        metric: requests
+      - label: Payments / Treasury / Embedded Banking API Access
+        name: api_access
+        type: flat
+        metric: varies
         limit: -1
-        timeFrame: month
-        geo: configurable
-        domains:
-          - https://api.jpmorgan.com
+        timeFrame: usage
+        geo: global
         unit: 1
-        price: custom
-        userMultiplied: false
-      - label: Rate Limit
-        description: Negotiated burst and steady-state rate
-        name: rate_limit
-        type: rate
-        metric: requests_per_minute
-        limit: 1000
-        timeFrame: minute
-        geo: configurable
-        domains:
-          - https://api.jpmorgan.com
-        unit: 1
-        price: custom
+        price: contact J.P. Morgan Payments
         userMultiplied: false
     elements:
-      - name: Unlimited / Negotiated Volume
-      - name: 24/7 Dedicated Support
-      - name: Contractual SLA
-      - name: Security & Compliance Review
-      - name: Dedicated Account Manager
-      - name: Custom Data Residency
-      - name: JPMorgan Chase API
+      - name: Underlying banking relationship required
+      - name: KYC / AML onboarding
+      - name: Sandbox access via developer portal
+      - name: Production scope unlocked per product (Payments, ACH, Wires, RTP, FX, Embedded Banking)
 maintainers:
-  - FN: API Evangelist
-    email: info@apievangelist.com
+  - FN: Kin Lane
+    email: kin@apievangelist.com
