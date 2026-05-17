@@ -8,7 +8,7 @@ description: >-
   services including payments, treasury services, trade finance, FX, embedded
   finance, and market data, enabling corporate clients and fintech partners to
   integrate banking capabilities into their applications.
-type: Contract
+kind: contract
 image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
 tags:
   - Banking
