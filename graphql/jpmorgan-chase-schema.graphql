@@ -1,0 +1,828 @@
+scalar DateTime
+scalar Date
+scalar Decimal
+scalar JSON
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+  FEE
+  INTEREST
+  ADJUSTMENT
+  TRANSFER
+}
+
+enum PaymentStatus {
+  PENDING
+  INITIATED
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+  RETURNED
+  REJECTED
+}
+
+enum MandateStatus {
+  ACTIVE
+  INACTIVE
+  CANCELLED
+  EXPIRED
+  SUSPENDED
+}
+
+enum CurrencyCode {
+  USD
+  EUR
+  GBP
+  JPY
+  CHF
+  CAD
+  AUD
+  SGD
+  HKD
+}
+
+enum AccountType {
+  CHECKING
+  SAVINGS
+  MONEY_MARKET
+  TREASURY
+  ESCROW
+  INVESTMENT
+}
+
+enum LoanStatus {
+  ACTIVE
+  CLOSED
+  DEFAULTED
+  DELINQUENT
+  PAID_OFF
+}
+
+enum SettlementStatus {
+  PENDING
+  SETTLED
+  FAILED
+  REVERSED
+}
+
+type Organization {
+  id: ID!
+  name: String!
+  legalName: String
+  taxId: String
+  countryCode: String
+  address: String
+  bankAccounts: [BankAccount!]
+  kyc: KYC
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type KYC {
+  id: ID!
+  organization: Organization!
+  status: String!
+  verifiedAt: DateTime
+  expiresAt: DateTime
+  documents: [String!]
+  riskLevel: String
+  notes: String
+}
+
+type BankAccount {
+  id: ID!
+  accountNumber: String!
+  bankName: String!
+  routingNumber: RoutingNumber
+  iban: IBAN
+  swift: SWIFT
+  sortCode: SortCode
+  currency: CurrencyCode!
+  accountType: AccountType
+  owner: Organization
+  isActive: Boolean!
+}
+
+type RoutingNumber {
+  value: String!
+  bankName: String
+  bankAddress: String
+}
+
+type IBAN {
+  value: String!
+  countryCode: String!
+  checkDigits: String!
+  bankCode: String
+  branchCode: String
+  accountNumber: String!
+}
+
+type SWIFT {
+  code: String!
+  bankName: String!
+  countryCode: String!
+  locationCode: String!
+  branchCode: String
+}
+
+type SortCode {
+  value: String!
+  bankName: String
+  branchName: String
+}
+
+type Account {
+  id: ID!
+  accountNumber: String!
+  accountType: AccountType!
+  currency: CurrencyCode!
+  organization: Organization
+  balance: AccountBalance
+  details: AccountDetails
+  transactions(limit: Int, offset: Int): [Transaction!]
+  statements: [Statement!]
+  standingOrders: [StandingOrder!]
+  mandates: [Mandate!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type AccountBalance {
+  accountId: ID!
+  available: Decimal!
+  current: Decimal!
+  pending: Decimal!
+  currency: CurrencyCode!
+  asOf: DateTime!
+  history: [BalanceHistory!]
+}
+
+type AccountDetails {
+  accountId: ID!
+  bankAccount: BankAccount!
+  interestRate: Decimal
+  overdraftLimit: Decimal
+  creditLimit: Decimal
+  openedAt: DateTime
+  closedAt: DateTime
+}
+
+type BalanceHistory {
+  date: Date!
+  openingBalance: Decimal!
+  closingBalance: Decimal!
+  currency: CurrencyCode!
+  totalCredits: Decimal!
+  totalDebits: Decimal!
+}
+
+type Transaction {
+  id: ID!
+  account: Account!
+  transactionType: TransactionType!
+  amount: Decimal!
+  currency: CurrencyCode!
+  description: String
+  referenceId: String
+  valueDate: Date!
+  bookingDate: Date!
+  status: PaymentStatus!
+  details: TransactionDetails
+  remittance: Remittance
+  counterparty: Counterparty
+  createdAt: DateTime!
+}
+
+type TransactionDetails {
+  transactionId: ID!
+  categoryCode: String
+  merchantName: String
+  merchantCategory: String
+  exchangeRate: Decimal
+  originalAmount: Decimal
+  originalCurrency: CurrencyCode
+  fees: Decimal
+  charges: [String!]
+  metadata: JSON
+}
+
+type StatementLine {
+  id: ID!
+  statement: Statement!
+  transaction: Transaction
+  amount: Decimal!
+  currency: CurrencyCode!
+  description: String
+  runningBalance: Decimal!
+  valueDate: Date!
+  bookingDate: Date!
+}
+
+type Statement {
+  id: ID!
+  account: Account!
+  periodStart: Date!
+  periodEnd: Date!
+  openingBalance: Decimal!
+  closingBalance: Decimal!
+  currency: CurrencyCode!
+  lines: [StatementLine!]
+  generatedAt: DateTime!
+}
+
+type PaymentInstruction {
+  id: ID!
+  type: String!
+  amount: Decimal!
+  currency: CurrencyCode!
+  debtor: BankAccount!
+  creditor: BankAccount!
+  remittance: Remittance
+  executionDate: Date
+  status: PaymentStatus!
+  batchId: ID
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PaymentInitiation {
+  id: ID!
+  instruction: PaymentInstruction!
+  initiatedAt: DateTime!
+  initiatedBy: String
+  authorizationCode: String
+  status: PaymentStatus!
+  statusMessage: String
+}
+
+type ACHPayment {
+  id: ID!
+  instruction: PaymentInstruction!
+  secCode: String!
+  companyName: String!
+  companyId: String!
+  effectiveDate: Date!
+  traceNumber: String
+  status: PaymentStatus!
+  returnCode: String
+  returnReason: String
+  createdAt: DateTime!
+}
+
+type WireTransfer {
+  id: ID!
+  instruction: PaymentInstruction!
+  fedwireRef: String
+  chips: String
+  senderRef: String
+  receiverRef: String
+  intermediaryBank: SWIFT
+  status: PaymentStatus!
+  settledAt: DateTime
+  createdAt: DateTime!
+}
+
+type RTPayment {
+  id: ID!
+  instruction: PaymentInstruction!
+  networkRef: String
+  endToEndRef: String!
+  status: PaymentStatus!
+  acceptedAt: DateTime
+  completedAt: DateTime
+  createdAt: DateTime!
+}
+
+type FasterPayment {
+  id: ID!
+  instruction: PaymentInstruction!
+  sortCode: SortCode
+  fpid: String
+  status: PaymentStatus!
+  submittedAt: DateTime
+  completedAt: DateTime
+  createdAt: DateTime!
+}
+
+type CrossBorderPayment {
+  id: ID!
+  instruction: PaymentInstruction!
+  fxQuote: FXQuote
+  fxExecution: FXExecution
+  correspondentBank: SWIFT
+  charges: String
+  status: PaymentStatus!
+  createdAt: DateTime!
+}
+
+type FXQuote {
+  id: ID!
+  baseCurrency: CurrencyCode!
+  quoteCurrency: CurrencyCode!
+  exchangeRate: Decimal!
+  inverseRate: Decimal!
+  validFrom: DateTime!
+  validUntil: DateTime!
+  indicative: Boolean!
+  quoteRef: String!
+}
+
+type FXExecution {
+  id: ID!
+  quote: FXQuote!
+  baseAmount: Decimal!
+  quoteAmount: Decimal!
+  executedRate: Decimal!
+  executedAt: DateTime!
+  settlementDate: Date!
+  dealRef: String!
+  status: SettlementStatus!
+}
+
+type FXSpot {
+  id: ID!
+  quote: FXQuote!
+  execution: FXExecution
+  valueDate: Date!
+  dealRef: String!
+}
+
+type FXForward {
+  id: ID!
+  quote: FXQuote!
+  execution: FXExecution
+  valueDate: Date!
+  maturityDate: Date!
+  dealRef: String!
+  forwardPoints: Decimal
+}
+
+type FXSwap {
+  id: ID!
+  nearLeg: FXSpot!
+  farLeg: FXForward!
+  dealRef: String!
+  executedAt: DateTime!
+}
+
+type Derivative {
+  id: ID!
+  type: String!
+  underlier: String!
+  notional: Decimal!
+  currency: CurrencyCode!
+  maturityDate: Date!
+  dealRef: String!
+  counterparty: Counterparty!
+  valuationDate: Date
+  marketValue: Decimal
+}
+
+type PaymentBatch {
+  id: ID!
+  name: String!
+  totalAmount: Decimal!
+  currency: CurrencyCode!
+  paymentCount: Int!
+  payments: [PaymentInstruction!]
+  status: PaymentStatus!
+  submittedAt: DateTime
+  processedAt: DateTime
+  createdAt: DateTime!
+}
+
+type FundTransfer {
+  id: ID!
+  sourceAccount: Account!
+  destinationAccount: Account!
+  amount: Decimal!
+  currency: CurrencyCode!
+  reference: String
+  executionDate: Date
+  status: PaymentStatus!
+  createdAt: DateTime!
+}
+
+type DirectDebit {
+  id: ID!
+  mandate: Mandate!
+  amount: Decimal!
+  currency: CurrencyCode!
+  collectionDate: Date!
+  description: String
+  status: PaymentStatus!
+  returnCode: String
+  createdAt: DateTime!
+}
+
+type Mandate {
+  id: ID!
+  reference: String!
+  debtor: BankAccount!
+  creditor: BankAccount!
+  type: String!
+  status: MandateStatus!
+  signedAt: DateTime
+  cancelledAt: DateTime
+  directDebits: [DirectDebit!]
+  createdAt: DateTime!
+}
+
+type StandingOrder {
+  id: ID!
+  account: Account!
+  beneficiary: Beneficiary!
+  amount: Decimal!
+  currency: CurrencyCode!
+  frequency: String!
+  startDate: Date!
+  endDate: Date
+  nextExecutionDate: Date
+  reference: String
+  status: String!
+  createdAt: DateTime!
+}
+
+type Beneficiary {
+  id: ID!
+  name: String!
+  bankAccount: BankAccount!
+  reference: String
+  organization: Organization
+  isVerified: Boolean!
+  createdAt: DateTime!
+}
+
+type Recipient {
+  id: ID!
+  name: String!
+  email: String
+  bankAccount: BankAccount!
+  organization: Organization
+  remittanceInfo: String
+  createdAt: DateTime!
+}
+
+type Remittance {
+  id: ID!
+  reference: String
+  information: String
+  invoiceRef: String
+  creditorRef: String
+  structuredRef: String
+}
+
+type Payout {
+  id: ID!
+  recipient: Recipient!
+  amount: Decimal!
+  currency: CurrencyCode!
+  method: String!
+  status: PaymentStatus!
+  scheduledAt: DateTime
+  processedAt: DateTime
+  createdAt: DateTime!
+}
+
+type Deposit {
+  id: ID!
+  account: Account!
+  amount: Decimal!
+  currency: CurrencyCode!
+  type: String!
+  valueDate: Date!
+  maturityDate: Date
+  interestRate: Decimal
+  status: String!
+  createdAt: DateTime!
+}
+
+type Withdrawal {
+  id: ID!
+  account: Account!
+  amount: Decimal!
+  currency: CurrencyCode!
+  method: String!
+  reference: String
+  status: PaymentStatus!
+  executedAt: DateTime
+  createdAt: DateTime!
+}
+
+type Loan {
+  id: ID!
+  account: Account!
+  borrower: Organization!
+  principalAmount: Decimal!
+  outstandingBalance: Decimal!
+  currency: CurrencyCode!
+  interestRate: Decimal!
+  loanType: String!
+  status: LoanStatus!
+  startDate: Date!
+  maturityDate: Date!
+  nextPaymentDate: Date
+  nextPaymentAmount: Decimal
+  application: LoanApplication
+  createdAt: DateTime!
+}
+
+type LoanApplication {
+  id: ID!
+  applicant: Organization!
+  requestedAmount: Decimal!
+  currency: CurrencyCode!
+  purpose: String
+  status: String!
+  submittedAt: DateTime!
+  reviewedAt: DateTime
+  approvedAt: DateTime
+  rejectionReason: String
+}
+
+type CreditLine {
+  id: ID!
+  organization: Organization!
+  limit: Decimal!
+  available: Decimal!
+  utilized: Decimal!
+  currency: CurrencyCode!
+  interestRate: Decimal!
+  reviewDate: Date
+  expiryDate: Date
+  status: String!
+}
+
+type TradeFinance {
+  id: ID!
+  type: String!
+  applicant: Organization!
+  beneficiary: Organization!
+  amount: Decimal!
+  currency: CurrencyCode!
+  expiryDate: Date!
+  documents: [String!]
+  status: String!
+  issuedAt: DateTime
+  createdAt: DateTime!
+}
+
+type LetterOfCredit {
+  id: ID!
+  tradeFinance: TradeFinance!
+  lcNumber: String!
+  issuingBank: SWIFT!
+  advisingBank: SWIFT
+  terms: String
+  partialShipments: Boolean
+  transhipment: Boolean
+  portOfLoading: String
+  portOfDischarge: String
+  goodsDescription: String
+  createdAt: DateTime!
+}
+
+type BankGuarantee {
+  id: ID!
+  tradeFinance: TradeFinance!
+  guaranteeNumber: String!
+  guaranteeType: String!
+  issuingBank: SWIFT!
+  expiryPlace: String
+  claimPeriod: Int
+  automaticExtension: Boolean
+  createdAt: DateTime!
+}
+
+type Invoice {
+  id: ID!
+  invoiceNumber: String!
+  issuer: Organization!
+  recipient: Organization!
+  amount: Decimal!
+  currency: CurrencyCode!
+  issueDate: Date!
+  dueDate: Date!
+  status: String!
+  lineItems: [String!]
+  payment: PaymentInstruction
+}
+
+type Treasury {
+  id: ID!
+  organization: Organization!
+  cashPositions: [AccountBalance!]
+  investments: [Investment!]
+  fxExposures: [FXExecution!]
+  derivatives: [Derivative!]
+  reportDate: Date!
+}
+
+type Investment {
+  id: ID!
+  organization: Organization!
+  type: String!
+  name: String!
+  amount: Decimal!
+  currency: CurrencyCode!
+  units: Decimal
+  nav: Decimal
+  purchaseDate: Date!
+  maturityDate: Date
+  currentValue: Decimal
+  unrealizedPnl: Decimal
+}
+
+type Securities {
+  id: ID!
+  isin: String!
+  name: String!
+  type: String!
+  issuer: String!
+  currency: CurrencyCode!
+  faceValue: Decimal
+  marketPrice: Decimal
+  exchange: String
+  maturityDate: Date
+}
+
+type Bond {
+  id: ID!
+  securities: Securities!
+  couponRate: Decimal!
+  couponFrequency: String!
+  yieldToMaturity: Decimal
+  duration: Decimal
+  creditRating: String
+  nextCouponDate: Date
+}
+
+type Settlement {
+  id: ID!
+  trade: String!
+  securitiesId: ID
+  amount: Decimal!
+  currency: CurrencyCode!
+  settlementDate: Date!
+  status: SettlementStatus!
+  counterparty: Counterparty!
+  custodian: String
+  settledAt: DateTime
+}
+
+type Custody {
+  id: ID!
+  organization: Organization!
+  securities: [Securities!]
+  totalValue: Decimal!
+  currency: CurrencyCode!
+  custodian: String!
+  accountNumber: String!
+  valuationDate: Date!
+}
+
+type Counterparty {
+  id: ID!
+  name: String!
+  legalEntityId: String
+  swift: SWIFT
+  organization: Organization
+  riskRating: String
+  isActive: Boolean!
+  kyc: KYC
+}
+
+type RegulatoryReport {
+  id: ID!
+  organization: Organization!
+  reportType: String!
+  regulatoryBody: String!
+  reportingPeriod: String!
+  submittedAt: DateTime
+  status: String!
+  reference: String
+  data: JSON
+}
+
+type ComplianceRecord {
+  id: ID!
+  organization: Organization!
+  type: String!
+  description: String!
+  status: String!
+  dueDate: Date
+  completedAt: DateTime
+  assignedTo: String
+  notes: String
+}
+
+type TaxDocument {
+  id: ID!
+  organization: Organization!
+  documentType: String!
+  taxYear: Int!
+  issuedAt: DateTime!
+  amount: Decimal
+  currency: CurrencyCode
+  downloadUrl: String
+}
+
+type APIKey {
+  id: ID!
+  name: String!
+  keyPrefix: String!
+  scopes: [String!]!
+  organization: Organization!
+  createdAt: DateTime!
+  expiresAt: DateTime
+  lastUsedAt: DateTime
+  isActive: Boolean!
+}
+
+type OAuthToken {
+  accessToken: String!
+  tokenType: String!
+  expiresIn: Int!
+  refreshToken: String
+  scope: String!
+  issuedAt: DateTime!
+}
+
+type Webhook {
+  id: ID!
+  organization: Organization!
+  url: String!
+  events: [String!]!
+  isActive: Boolean!
+  secret: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  lastTriggeredAt: DateTime
+  failureCount: Int!
+}
+
+type Query {
+  account(id: ID!): Account
+  accounts(organizationId: ID!, limit: Int, offset: Int): [Account!]
+  accountBalance(accountId: ID!): AccountBalance
+  transaction(id: ID!): Transaction
+  transactions(accountId: ID!, limit: Int, offset: Int): [Transaction!]
+  statement(id: ID!): Statement
+  statements(accountId: ID!, limit: Int, offset: Int): [Statement!]
+  paymentInstruction(id: ID!): PaymentInstruction
+  achPayment(id: ID!): ACHPayment
+  wireTransfer(id: ID!): WireTransfer
+  rtPayment(id: ID!): RTPayment
+  fasterPayment(id: ID!): FasterPayment
+  crossBorderPayment(id: ID!): CrossBorderPayment
+  paymentBatch(id: ID!): PaymentBatch
+  fxQuote(baseCurrency: CurrencyCode!, quoteCurrency: CurrencyCode!, amount: Decimal!): FXQuote
+  fxExecution(id: ID!): FXExecution
+  beneficiary(id: ID!): Beneficiary
+  beneficiaries(organizationId: ID!): [Beneficiary!]
+  mandate(id: ID!): Mandate
+  mandates(organizationId: ID!): [Mandate!]
+  standingOrder(id: ID!): StandingOrder
+  loan(id: ID!): Loan
+  loans(organizationId: ID!): [Loan!]
+  creditLine(organizationId: ID!): CreditLine
+  tradeFinance(id: ID!): TradeFinance
+  letterOfCredit(id: ID!): LetterOfCredit
+  bankGuarantee(id: ID!): BankGuarantee
+  treasury(organizationId: ID!, date: Date!): Treasury
+  investment(id: ID!): Investment
+  securities(isin: String!): Securities
+  settlement(id: ID!): Settlement
+  custody(organizationId: ID!): Custody
+  organization(id: ID!): Organization
+  counterparty(id: ID!): Counterparty
+  regulatoryReport(id: ID!): RegulatoryReport
+  complianceRecords(organizationId: ID!): [ComplianceRecord!]
+  taxDocuments(organizationId: ID!, taxYear: Int!): [TaxDocument!]
+  webhook(id: ID!): Webhook
+  webhooks(organizationId: ID!): [Webhook!]
+}
+
+type Mutation {
+  initiateACHPayment(input: JSON!): ACHPayment
+  initiateWireTransfer(input: JSON!): WireTransfer
+  initiateRTPayment(input: JSON!): RTPayment
+  initiateFasterPayment(input: JSON!): FasterPayment
+  initiateCrossBorderPayment(input: JSON!): CrossBorderPayment
+  submitPaymentBatch(input: JSON!): PaymentBatch
+  cancelPayment(id: ID!): PaymentInstruction
+  createFundTransfer(input: JSON!): FundTransfer
+  createBeneficiary(input: JSON!): Beneficiary
+  deleteBeneficiary(id: ID!): Boolean
+  createMandate(input: JSON!): Mandate
+  cancelMandate(id: ID!): Mandate
+  createStandingOrder(input: JSON!): StandingOrder
+  cancelStandingOrder(id: ID!): StandingOrder
+  applyForLoan(input: JSON!): LoanApplication
+  createWebhook(input: JSON!): Webhook
+  updateWebhook(id: ID!, input: JSON!): Webhook
+  deleteWebhook(id: ID!): Boolean
+}
