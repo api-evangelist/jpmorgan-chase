@@ -8,7 +8,7 @@ description: JPMorgan Chase is a leading global financial services firm and one 
   corporate clients and fintech partners to integrate banking capabilities into their
   applications.
 kind: contract
-image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
 - Banking
 - Embedded Finance
@@ -26,7 +26,7 @@ apis:
   description: JPMorgan Chase provides developer APIs for banking services including
     payments, treasury, trade finance, and market data. The APIs enable corporate
     clients and fintech partners to integrate banking capabilities into their applications.
-  image: https://kinlane-productions2.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
   humanURL: https://developer.jpmorgan.com/
   baseURL: https://api.jpmorgan.com
   tags:
