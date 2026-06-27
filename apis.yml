@@ -46,7 +46,7 @@ common:
   url: https://github.com/jpmorganchase
 - type: Website
   url: https://www.jpmorganchase.com
-- type: Developer Portal
+- type: DeveloperPortal
   url: https://developer.jpmorgan.com/
 - type: About
   url: https://www.jpmorganchase.com/about
