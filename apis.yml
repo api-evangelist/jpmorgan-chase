@@ -42,6 +42,10 @@ apis:
   - url: graphql/jpmorgan-chase-graphql.md
     type: GraphQL
 common:
+- type: DomainSecurity
+  url: security/jpmorgan-chase-domain-security.yml
+- type: Authentication
+  url: authentication/jpmorgan-chase-authentication.yml
 - type: GitHubOrganization
   url: https://github.com/jpmorganchase
 - type: Website
