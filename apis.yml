@@ -42,6 +42,8 @@ apis:
   - url: graphql/jpmorgan-chase-graphql.md
     type: GraphQL
 common:
+- type: AgenticAccess
+  url: agentic-access/jpmorgan-chase-agentic-access.yml
 - type: DomainSecurity
   url: security/jpmorgan-chase-domain-security.yml
 - type: Authentication
