@@ -40,12 +40,16 @@ JPMorgan Chase provides developer APIs for banking services including payments, 
 - [OpenAPI](openapi/jpmorgan-chase-jpmorgan-api-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
 - [Postman Collection](collections/jpmorgan-chase-jpmorgan-api.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
 - [Open Collection](collections/jpmorgan-chase-jpmorgan-api.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [Graph Q L](graphql/jpmorgan-chase-graphql.md)
 
 ## Common Properties
 
+- [Agentic Access](agentic-access/jpmorgan-chase-agentic-access.yml)
+- [Domain Security](security/jpmorgan-chase-domain-security.yml)
+- [Authentication](authentication/jpmorgan-chase-authentication.yml)
 - [GitHub Organization](https://github.com/jpmorganchase)
 - [Website](https://www.jpmorganchase.com)
-- [Developer  Portal](https://developer.jpmorgan.com/)
+- [Developer Portal](https://developer.jpmorgan.com/)
 - [About](https://www.jpmorganchase.com/about)
 - [Newsroom](https://www.jpmorganchase.com/news-stories)
 - [Investor  Relations](https://www.jpmorganchase.com/ir)
