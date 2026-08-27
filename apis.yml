@@ -28,26 +28,20 @@ created: '2026-03-21'
 modified: '2026-05-19'
 specificationVersion: '0.23'
 apis:
-- aid: jpmorgan-chase:jpmorgan-api
-  name: JPMorgan Chase API
-  description: JPMorgan Chase provides developer APIs for banking services including
-    payments, treasury, trade finance, and market data. The APIs enable corporate
-    clients and fintech partners to integrate banking capabilities into their applications.
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+- aid: jpmorgan-chase:jpmorgan-chase-banking-api
+  name: JPMorgan Chase Banking API
+  description: Banking operations
   humanURL: https://developer.jpmorgan.com/
   baseURL: https://api.jpmorgan.com
   tags:
   - Banking
-  - Finance
-  - Payments
-  - Treasury
   properties:
+  - type: OpenAPI
+    url: openapi/jpmorgan-chase-banking-api-openapi.yml
   - type: Documentation
     url: https://developer.jpmorgan.com/
-  - type: OpenAPI
-    url: openapi/jpmorgan-chase-jpmorgan-api-openapi.yml
-  - url: graphql/jpmorgan-chase-graphql.md
-    type: GraphQL
+  - type: GraphQL
+    url: graphql/jpmorgan-chase-graphql.md
 common:
 - type: AgenticAccess
   url: agentic-access/jpmorgan-chase-agentic-access.yml
