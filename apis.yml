@@ -8,6 +8,17 @@ description: JPMorgan Chase is a leading global financial services firm and one 
   corporate clients and fintech partners to integrate banking capabilities into their
   applications.
 kind: contract
+deliveryModel:
+  model: unknown
+  open_source: false
+  commercial: false
+  callable_host: true
+  label: Delivery model not determined — needs a product licence on record
+  confidence: low
+  source:
+  - openapi
+  generated: '2026-08-28'
+  method: derived
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 tags:
 - Banking
